@@ -59,7 +59,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onury/accesscontrol.git"
+    "url": "https://Portal-ITA/capstone-accesscontrol.git"
   },
   "keywords": [
     "access",
