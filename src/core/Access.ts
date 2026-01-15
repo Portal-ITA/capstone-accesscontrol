@@ -1,5 +1,5 @@
-import { AccessControl } from '../';
-import { IAccessInfo, AccessControlError } from '../core';
+import { AccessControl } from '..';
+import { IAccessInfo, AccessControlError } from '.';
 import { Action, Possession, actions, possessions } from '../enums';
 import { utils } from '../utils';
 
@@ -459,6 +459,68 @@ class Access {
      */
     delete(resource?: string | string[], attributes?: string | string[]): Access {
         return this.deleteAny(resource, attributes);
+    }
+
+    /**
+     *  Sets the action to `"reference"` and possession to `"own"` and commits the
+     *  current access instance to the underlying grant model.
+     *
+     *  @param {String|Array<String>} [resource]
+     *         Defines the target resource this access is granted or denied for.
+     *         This is only optional if the resource is previously defined.
+     *         If not defined and omitted, this will throw.
+     *  @param {String|Array<String>} [attributes]
+     *         Defines the resource attributes for which the access is granted
+     *         for. If access is denied previously by calling `.deny()` this
+     *         will default to an empty array (which means no attributes allowed).
+     *         Otherwise (if granted before via `.grant()`) this will default
+     *         to `["*"]` (which means all attributes allowed.)
+     *
+     *  @throws {AccessControlError}
+     *          If the access instance to be committed has any invalid data.
+     *
+     *  @returns {Access}
+     *           Self instance of `Access` so that you can chain and define
+     *           another access instance to be committed.
+     */
+    referenceOwn(resource?: string | string[], attributes?: string | string[]): Access {
+        return this._prepareAndCommit(Action.REFERENCE, Possession.OWN, resource, attributes);
+    }
+
+    /**
+     *  Sets the action to `"reference"` and possession to `"any"` and commits the
+     *  current access instance to the underlying grant model.
+     *  @alias Access#reference
+     *  @name AccessControl~Access#referenceAny
+     *  @function
+     *
+     *  @param {String|Array<String>} [resource]
+     *         Defines the target resource this access is granted or denied for.
+     *         This is only optional if the resource is previously defined.
+     *         If not defined and omitted, this will throw.
+     *  @param {String|Array<String>} [attributes]
+     *         Defines the resource attributes for which the access is granted
+     *         for. If access is denied previously by calling `.deny()` this
+     *         will default to an empty array (which means no attributes allowed).
+     *         Otherwise (if granted before via `.grant()`) this will default
+     *         to `["*"]` (which means all attributes allowed.)
+     *
+     *  @throws {AccessControlError}
+     *          If the access instance to be committed has any invalid data.
+     *
+     *  @returns {Access}
+     *           Self instance of `Access` so that you can chain and define
+     *           another access instance to be committed.
+     */
+    referenceAny(resource?: string | string[], attributes?: string | string[]): Access {
+        return this._prepareAndCommit(Action.REFERENCE, Possession.ANY, resource, attributes);
+    }
+    /**
+     *  Alias of `referenceAny`
+     *  @private
+     */
+    reference(resource?: string | string[], attributes?: string | string[]): Access {
+        return this.referenceAny(resource, attributes);
     }
 
     // -------------------------------

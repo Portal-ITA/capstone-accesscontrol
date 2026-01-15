@@ -2,7 +2,7 @@
  *  Enumerates the possible actions of a role.
  *  An action defines the type of an operation that will be executed on a
  *  "resource" by a "role".
- *  This is known as CRUD (CREATE, READ, UPDATE, DELETE).
+ *  This is known as CRUD (CREATE, READ, UPDATE, DELETE) and a Relational Query (REFERENCE).
  *  @enum {String}
  *  @readonly
  *  @memberof! AccessControl
@@ -31,7 +31,13 @@ const Action = {
      *  For example, an HTTP DELETE request or a database DELETE operation.
      *  @type {String}
      */
-    DELETE: 'delete'
+    DELETE: 'delete',
+    /**
+     *  Specifies a REFERENCE action to be performed on a resource.
+     *  For example, an HTTP anchor href or a image src links.
+     *  @type {String}
+     */
+    REFERENCE: 'reference',
 };
 
 export { Action };

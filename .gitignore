@@ -8,3 +8,15 @@ TODO.md
 /test/.coverage/
 .DS_Store
 yarn-error.log
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# TypeScript build outputs
+dist/
+build/
+lib/
+out/

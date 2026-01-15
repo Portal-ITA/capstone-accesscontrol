@@ -1,4 +1,4 @@
-import { IQueryInfo, Permission, AccessControlError } from '../core';
+import { IQueryInfo, Permission, AccessControlError } from '.';
 import { Action, Possession } from '../enums';
 import { utils } from '../utils';
 
@@ -275,6 +275,53 @@ class Query {
         return this.deleteAny(resource);
     }
 
+    /**
+     *  Queries the underlying grant model and checks whether the current
+     *  role(s) can "reference" their "own" resource.
+     *
+     *  @param {String} [resource]
+     *         Defines the target resource to be checked.
+     *         This is only optional if the target resource is previously
+     *         defined. If not defined and omitted, this will throw.
+     *
+     *  @throws {Error} If the access query instance to be committed has any
+     *  invalid data.
+     *
+     *  @returns {Permission}
+     *           An object that defines whether the permission is granted; and
+     *           the resource attributes that the permission is granted for.
+     */
+    referenceOwn(resource?: string, value?: string): Permission {
+        return this._getPermissionFor(Action.REFERENCE, Possession.OWN, resource, value);
+    }
+
+    /**
+     *  Queries the underlying grant model and checks whether the current
+     *  role(s) can "reference" "any" resource.
+     *
+     *  @param {String} [resource]
+     *         Defines the target resource to be checked.
+     *         This is only optional if the target resource is previously
+     *         defined. If not defined and omitted, this will throw.
+     *
+     *  @throws {Error} If the access query instance to be committed has any
+     *  invalid data.
+     *
+     *  @returns {Permission}
+     *           An object that defines whether the permission is granted; and
+     *           the resource attributes that the permission is granted for.
+     */
+    referenceAny(resource?: string, value?: string): Permission {
+        return this._getPermissionFor(Action.REFERENCE, Possession.ANY, resource, value);
+    }
+    /**
+     *  Alias if `referenceAny`
+     *  @private
+     */
+    reference(resource?: string, value?: string): Permission {
+        return this.referenceAny(resource, value);
+    }
+
     // -------------------------------
     //  PRIVATE METHODS
     // -------------------------------
@@ -290,6 +337,21 @@ class Query {
         this._.action = action;
         this._.possession = possession;
         if (resource) this._.resource = resource;
+        return new Permission(this._grants, this._);
+    }
+
+    /**
+     *  @private
+     *  @param {String} action
+     *  @param {String} possession
+     *  @param {String} [resource]
+     *  @returns {Permission}
+     */
+    private _getPermissionFor(action: string, possession: string, resource?: string, value?: string): Permission {
+        this._.action = action;
+        this._.possession = possession;
+        if (resource) this._.resource = resource;
+        this._.value = value;
         return new Permission(this._grants, this._);
     }
 }

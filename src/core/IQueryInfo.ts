@@ -31,6 +31,11 @@ interface IQueryInfo {
      *  @type {String}
      */
     possession?: string;
+    /**
+     *  Defines the permited value of the possession for the specified action upon the resource.
+     *  @type {String}
+     */
+    value?: string;
 }
 
 export { IQueryInfo };

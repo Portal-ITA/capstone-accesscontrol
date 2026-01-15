@@ -1,7 +1,7 @@
 // dep modules
 import * as Notation from 'notation';
 // own modules
-import { AccessControl } from './';
+import { AccessControl } from '.';
 import { Action, actions, Possession, possessions } from './enums';
 import { IAccessInfo, IQueryInfo, AccessControlError } from './core';
 
@@ -66,7 +66,7 @@ const utils = {
      */
     toStringArray(value: any): string[] {
         if (Array.isArray(value)) return value;
-        if (typeof value === 'string') return value.trim().split(/\s*[;,]\s*/);
+        if (typeof value === 'string') return value.trim().split(/\s*[;]\s*/);
         // throw new Error('Expected a string or array of strings, got ' + utils.type(value));
         return [];
     },
@@ -81,6 +81,20 @@ const utils = {
         if (!arr || !Array.isArray(arr)) return false;
         for (let s of arr) {
             if (typeof s !== 'string' || s.trim() === '') return false;
+        }
+        return true;
+    },
+
+    /**
+     *  Checks whether the given array consists of non-empty string items.
+     *  (Array can be empty but no item should be an empty string.)
+     *  @param {Array} arr - Array to be checked.
+     *  @returns {Boolean}
+     */
+    isFilledObjectStringPairsArray(arr: any[]): boolean {
+        if (!arr || !Array.isArray(arr)) return false;
+        for (let s of arr) {
+            if (typeof s !== 'object' || typeof s.key === 'undefined' || s.key.trim() === '' || typeof s.value === 'undefined' || s.value.trim() === '') return false;
         }
         return true;
     },
@@ -290,8 +304,14 @@ const utils = {
                 throw new AccessControlError(`Invalid action possession: "${action}"`);
             }
             let perms = o[action];
-            if (!utils.isEmptyArray(perms) && !utils.isFilledStringArray(perms)) {
-                throw new AccessControlError(`Invalid resource attributes for action "${action}".`);
+            if (s[0] === Action.REFERENCE) {
+                if (!utils.isEmptyArray(perms) && !utils.isFilledObjectStringPairsArray(perms)) {
+                    throw new AccessControlError(`Invalid resource attribute pairs for action "${action}".`);
+                }    
+            } else {
+                if (!utils.isEmptyArray(perms) && !utils.isFilledStringArray(perms)) {
+                    throw new AccessControlError(`Invalid resource attributes for action "${action}".`);
+                }    
             }
         });
         return true;

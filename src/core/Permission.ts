@@ -1,5 +1,5 @@
 // own modules
-import { IQueryInfo } from '../core';
+import { IQueryInfo } from '.';
 import { utils } from '../utils';
 
 /**
@@ -54,6 +54,7 @@ class Permission {
         this._.attributes = utils.getUnionAttrsOfRoles(grants, query);
         this._.role = query.role;
         this._.resource = query.resource;
+        this._.value = query.value;
     }
 
     /**
@@ -113,8 +114,17 @@ class Permission {
     get granted(): boolean {
         if (!this.attributes || this.attributes.length === 0) return false;
         // just one non-negated attribute is enough.
-        return this.attributes.some((attr: string) => {
-            return attr.trim().slice(0, 1) !== '!';
+        return this.attributes.some((attr?: Object) => {
+            if (typeof attr === 'string') {
+                return attr.trim().slice(0, 1) !== '!';
+            }
+            else if (typeof attr === 'object') {
+                if (attr['value'] !== '*' && attr['value'] !== this._.value) {
+                    return false;
+                }
+        }
+
+            return true;
         });
     }
 
